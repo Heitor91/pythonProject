@@ -14,12 +14,18 @@ Funções obrigatórias: Adicionar, Remover, Localizar*, Mostrar agenda toda, Mo
        idade
 """
 from Custom_Libraries.AuxClass import Agenda
-from Custom_Libraries.Auxiliar_functions import entra_nome, lista_contato, data_nascimento, empresa
+from Custom_Libraries.Auxiliar_functions import entra_nome, lista_contato, data_nascimento, empresa, agenda_para_txt, \
+    formata_contatos
 
 # =====================================================================================================================
 # =================================================Programa principal==================================================
 # =====================================================================================================================
 contatos = Agenda.start_class()
+try:
+    with open('Custom_Libraries/Contatos_Agenda.txt', 'x') as arquivo:
+        arquivo.write('##LINE##CONTROL##\n')
+except FileExistsError:
+    contatos.lista = formata_contatos()
 # ================================Menu da agenda=====================================================================
 while True:
     op = input("(A)diciona|(L)ocaliza|(R)emove|(C)ontatos|(P)essoa|(S)air:")
@@ -53,6 +59,7 @@ while True:
         contatos.imprime_pessoa(busca.capitalize())
     # =====Menu Operacional para sair do programa=====================================================================
     elif op.upper() == 'S':
+        print(agenda_para_txt(contatos.lista))
         exit(0)
     # =====Menu Operacional de invalidação de comando=================================================================
     else:

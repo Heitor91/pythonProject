@@ -138,3 +138,64 @@ def empresa():
                 if nome.replace(' ', '').isalnum():
                     return coorp, nome
                 print("Entrada possui caracteres não autorizados!!")
+
+
+# =====================================================================================================================
+# Função que valida os valores inseridos de data ======================================================================
+def valida_data(data):
+    if 1900 < int(data[4:]) < 2022:
+        if 0 < int(data[2:4]) < 13:
+            if int(data[2:4]) in [4, 6, 9, 11]:
+                return 'Data Válida!!' if int(data[:2]) <= 30 else 'Dia inserido é inválido!!!'
+            if int(data[2:4]) == 2:
+                return 'Data Válida!!!' if (bissexto(int(data[4:])) and int(data[:2]) <= 29) or (
+                    not (bissexto(int(data[4:])) or not (int(data[:2]) <= 28))) else 'Dia inserido é inválido!!!'
+            return 'Data Válida!!!' if int(data[:2]) <= 31 else 'Dia inserido é inválido!!!'
+        return 'Mês inserido é inválido!!!'
+    return 'Ano inserido é inválido!!!'
+
+
+# =====================================================================================================================
+# Função auxiliar para verificar ano bissexto==========================================================================
+def bissexto(mes):
+    if mes % 400 == 0:
+        return True
+    if mes % 4 == 0 and mes % 100 != 0:
+        return True
+    return False
+
+
+# =====================================================================================================================
+# Função auxiliar para empacotar dados para armazenar em txt===========================================================
+def empacota_agenda(agenda):
+    armazenador = '##LINE##CONTROL##\n'
+    for i in range(len(agenda)):
+        armazenador += empacota_contatos(agenda[i]) + '\n' if i < len(agenda) else '#'
+    return armazenador
+
+
+def empacota_contatos(contato):
+    return '#'.join(contato[:3]) + '#' + '#'.join(contato[3]) + '#' + '#'.join(contato[4]) + '#' + '#'.join(contato[5:])
+
+
+def agenda_para_txt(agenda):
+    compactado = empacota_agenda(agenda)
+    with open('Agenda_de_Contatos.txt', 'w') as agenda:
+        agenda.write(compactado)
+        return 'Armazenado com sucesso!!!'
+
+
+def carrega_arquivo():
+    with open('Contatos_Agenda.txt') as arquivo:
+        aux = arquivo.read()
+        temp = aux.split('\n')
+        return temp[1:]
+
+
+def formata_contatos():
+    aux = carrega_arquivo()
+    temp = [index.split('#') for index in aux]
+    for index in range(len(temp)):
+        aux = (temp[index][3], temp[index][4])
+        temp[index].pop(3), temp[index].pop(4), temp[index].insert(3, aux)
+    return temp
